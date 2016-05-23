@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Work with Websockets and Spring</title>
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+    <link href="webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="webjars/flat-ui/css/flat-ui.css" rel="stylesheet">
+    <link href="static/css/portfolio.css" rel="stylesheet">
+    <script src="webjars/jquery/jquery.min.js"></script>
+    <script src="webjars/bootstrap/js/bootstrap.js"></script>
+    
+        <script language="javascript" type="text/javascript">
+        var websocket;
+
+        var connectVal = " #target"
+    	var loginButton = " #loginBtnId";
+       	var connectButton = " #connect";
+
+    	var sequenceVal = " #sequence_id";
+        var emailVal = " #email";
+
+      	var errorOutput = " #errorOutput"
+       	var statusOutput = " #statusOutput"
+       	var messageOutput = " #messageOutput"
+       	
+       	var subscriptionOnline;
+      	var subscriptionLogin;
+      	var subscriptionUserErrors;
+
+      	
+            $(document).ready(function(){
+
+            	function writeError(message) {
+                    $(errorOutput).append(message + '\n');
+                }
+
+                function writeStatus(message) {
+                    $(statusOutput).append(message + '\n');
+                }
+
+		        function writeMessageBody(message) {
+		        	var seq_id = $('#sequence_id').val();
+		        	var jsonMsg = JSON.parse(message.body);
+		        	if (jsonMsg.sequence_id == seq_id){
+            			$(messageOutput).append(message.body + '\n');
+    		        	seq_id++;
+            			$('#sequence_id').val(seq_id);
+		        	} else {
+		        		writeError("Wrong sequence_id " + seq_id);
+		        	}
+		        }
+		        
+		        function writeMessage(message) {
+            		$(messageOutput).append(message + '\n');
+		        }
+
+            	
+            $(connectButton).click(function doConnect() {
+            	
+                var ws = new WebSocket($(connectVal).val());
+                websocket = Stomp.over(ws);
+
+                   
+                    function displayServerTime(frame) {
+                        $(' #serverTime').text("Servers time:" + frame.body);
+                    }
+
+                    
+                    
+                   var connectCallback = function () {
+                	   subscriptionOnline = websocket.subscribe('/topic/server.time', displayServerTime);
+                	   subscriptionLogin =  websocket.subscribe('/topic/' + $('#email').val() + '/wslogin', writeMessageBody);
+                	   subscriptionUserErrors = websocket.subscribe('/queue/errors', writeError);
+                       writeStatus('CONNECTED');
+                   };
+                    	
+                   var errorCallback = function (error) {
+                	   writeError(error);
+                   };
+
+                   websocket.connect("guest", "guest", connectCallback, errorCallback);
+                  
+                   websocket.close = function (evt) {
+                        writeStatus('DISCONNECTED');
+                   };
+                });
+            	
+            	
+            	$(loginButton).on("click", function () {//get authentification
+
+                if(typeof websocket == 'undefined') {  
+                    writeStatus("WebSocket is closed");
+                	return;
+                }
+            		
+            	var sendParams = getParams();
+
+            	if (sendParams.email === null){ 
+            		return false;
+            	}
+            	if (sendParams.password === null) {
+            		return false;
+            	}
+            	if (sendParams.email.length == 0 || sendParams.password.length == 0) {
+            		return false;
+            	}
+
+            	var resultJSON = makeJSON(sendParams);
+     
+                writeMessage(JSON.stringify(resultJSON));
+
+            	websocket.send('/app/' + $('#email').val() + '/wslogin', {priority: 9}, JSON.stringify(resultJSON));
+            	})
+
+
+            	function getParams() {
+            		var dataParams = {};
+            	    $('.input-block-level').each(function () {
+            	        var id = $(this).attr('id');
+            	        dataParams[id] = $(this).val();
+            	    });
+            	  return dataParams;
+            	}
+            	
+
+            	function makeJSON(dataParams) {
+     
+             	var sequenceKey = $(sequenceVal).val();
+            		
+            	var BODY = {
+            			"type": 'LOGIN_CUSTOMER',
+            			"sequence_id": sequenceKey,
+            		    "data": dataParams
+            		}
+
+            		$.extend(BODY.data, dataParams);
+            	return BODY;
+            	}
+            	
+
+            $('#disconnect')
+                    .click(function () {
+                        if(typeof websocket != 'undefined') {
+                           	subscriptionOnline.unsubscribe();
+                          	subscriptionLogin.unsubscribe();
+                          	subscriptionUserErrors.unsubscribe();
+                        } else {
+                            alert("Not connected." + websocket);
+                        }
+                    });
+        });
+        
+        
+
+    </script>
+</head>
+<body>
+<div class="container">
+<nav class="navbar navbar-default" role="navigation">
+<div class="navbar-header">
+	<h1>WebSocket </h1>
+	<div class="form-horizontal">
+		<label>Target:</label>
+		<input type="text" id="target"  class="form-horizontal" value="ws://localhost:8080/portfolio"/>
+		<button id="connect" type="button"  class="btn btn-default" >Connect</button>
+		<button id="disconnect" type="button" class="btn btn-primary">Disconnect</button>
+	</div>
+
+	<h2>Authentificate: </h1>
+	
+	<div class="form-group">
+       	<label for="email">Email:</label>
+       	<input id="email"  class="input-block-level"  type="text" placeholder="Email" name="email">
+       	<label for="inputPassword">Password:</label>
+      	<input id="password"   type="text" class="input-block-level" placeholder="Password" name="password">
+      	<label for="sequence_id"></label>SequenceId:</label>
+        <input type="text" id="sequence_id" size="40" value="-1"/>
+        <button id="loginBtnId"  type="button" class="btn btn-primary">Authentificate</button>
+      </div>
+        </div>
+        <div class="navbar-header">
+               <a class="navbar-brand" href="/users">Users</a>
+               <a class="navbar-brand"  href="/history">History tokens</a>
+        </div>
+        <div class="collapse navbar-collapse" id="navbar-collapse-01">
+            <a class="btn btn-default navbar-btn navbar-right logout" href="logout.html" target="_self">
+                <span class="glyphicon glyphicon glyphicon-off"></span>
+            </a>
+        </div>
+        
+        
+    </nav>
+    <div > 
+        <h6 id="serverTime"> </h6>
+        <p class="text-info">Status output:</p>
+		<pre><textarea id="statusOutput" class="form-control" rows="5" cols="50"></textarea></pre>
+		<p class="text-info">Message output:</p>
+		<pre><textarea id="messageOutput" rows="8" class="form-control" cols="50"></textarea></pre>
+		<p>Error output:</p>
+   		<pre><textarea id="errorOutput" rows="5" class="form-control" cols="50"></textarea></pre>
+    </div>
+</div>
+<!-- 3rd party -->
+<script src="webjars/jquery/jquery.min.js"></script>
+<script src="webjars/bootstrap/js/bootstrap.js"></script>
+<script src="webjars/stomp-websocket/stomp.js"></script>
+</body>
+</html>
