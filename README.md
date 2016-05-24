@@ -34,9 +34,9 @@ http://localhost:8080/index.html
 Introduction
 --------------------------
 
-This is authentification system over STOMP and WebSocket. Application provides the following functions:
+This is authentication system over STOMP and WebSocket. Application provides the following functions:
 
-1. Authentification user over websocket.
+1. Authentication user over websocket.
 
  
 How work with application?

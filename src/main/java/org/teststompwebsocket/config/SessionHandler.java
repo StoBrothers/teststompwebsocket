@@ -30,6 +30,7 @@ import org.teststompwebsocket.util.ApplicationProperties;
 
 @Service
 public class SessionHandler {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionHandler.class);
     /**
      * If needs to kill session set to true.
