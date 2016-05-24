@@ -37,6 +37,11 @@ Introduction
 This is authentication system over STOMP and WebSocket. Application provides the following functions:
 
 1. Authentication user over websocket.
+2. Generate and save new token and expiration time of token.
+3. Show session expiration time and allow to kill session and close socket.
+4. Internal job check opened sessions  and close expired sessions every 5 seconds.
+5. You can to see storage with token at history page.
+6. You can to see opened sessions at sessions page.
 
  
 How work with application?
@@ -56,6 +61,5 @@ Test users
 
 
 
-
-Sergey Stotskiy
+author: Sergey Stotskiy
 

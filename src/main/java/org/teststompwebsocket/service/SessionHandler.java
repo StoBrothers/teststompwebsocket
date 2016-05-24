@@ -21,10 +21,9 @@ import org.teststompwebsocket.util.ApplicationProperties;
 import org.teststompwebsocket.util.WSSessionWrapper;
 
 /**
- * SessionHandler registering every websocket session and start a thread. This Thread every 5
- * seconds check expiration date for open sessions. If session is expired that updating status token
- * to NOT ACTIVE status in storage.
- * 
+ * SessionHandler is registering every websocket session and execute thread with checks websocket
+ * sessions. This Thread every 5 seconds check expiration date for open sessions. If session is
+ * expired thread forced to update status token to NOT active status in storage.
  * 
  * @author Sergey Stotskiy
  *
