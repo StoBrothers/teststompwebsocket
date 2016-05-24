@@ -15,13 +15,10 @@
  */
 package org.teststompwebsocket.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
 
 /**
  * Customizes Spring Security configuration.
@@ -32,40 +29,17 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private UserDetailsService userDetailsService;
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // @formatter:off
         http.csrf().disable() // Refactor login form
             .headers()
             .and()
-            .formLogin()
-            .defaultSuccessUrl("/index.html")
-            .loginPage("/login.html")
-            .failureUrl("/login.html?error")
-            .permitAll()
-            .and()
-            .logout()
-            .logoutSuccessUrl("/login.html?logout")
-            .logoutUrl("/logout.html")
-            .permitAll()
-            .and()
             .authorizeRequests()
-            .antMatchers("/static/**")
-            .permitAll()
-            .antMatchers("/webjars/**")
-            .permitAll()
-            .anyRequest()
-            .authenticated()
+            .antMatchers("/index.html") // for anonymous access  
+            .anonymous()
             .and();
         // @formatter:on
-    }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService);
     }
 
 }

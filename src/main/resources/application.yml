@@ -24,7 +24,7 @@ privatesettings:
         version: "LOCAL_VERSION"
         date: "0000-01-01T00:00:00+00:00"
     expirationtime:
-          plusexpirationseconds: 40
+          plusexpirationseconds: 20
           killsession: 1
 
 

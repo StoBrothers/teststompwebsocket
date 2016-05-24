@@ -17,31 +17,44 @@ package org.teststompwebsocket.web;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.user.SimpUser;
-import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.teststompwebsocket.service.SessionHandler;
+import org.teststompwebsocket.util.WSSessionWrapper;
+
+/**
+ * Show WebSocket sessions.
+ * 
+ * @author Sergey Stotskiy
+ */
 
 @RestController
-public class UserController {
-
-    private SimpUserRegistry userRegistry;
+public class SessionController {
 
     @Autowired
-    public UserController(SimpUserRegistry userRegistry) {
-        this.userRegistry = userRegistry;
+    private SessionHandler sessionHandler;
+
+    public SessionController() {
     }
 
-    @RequestMapping(path = "/users", method = RequestMethod.GET)
-    public List<String> listUsers() {
-        List<String> result = new ArrayList<>();
-        for (SimpUser user : this.userRegistry.getUsers()) {
-            result.add(user.toString());
+    /**
+     * Get activity session.
+     * 
+     * @return
+     */
+    @RequestMapping(path = "/sessions", method = RequestMethod.GET)
+    public List<String> listSessions() {
+        Map<String, WSSessionWrapper> map = sessionHandler.getSessions();
+        List<String> list = new ArrayList<String>(map.size());
+        for (WSSessionWrapper currentSession : map.values()) {
+            list.add(currentSession.toString());
         }
-        return result;
+        return list;
+
     }
 
 }

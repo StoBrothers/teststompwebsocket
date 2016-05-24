@@ -10,6 +10,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.teststompwebsocket.domain.WSToken;
 import org.teststompwebsocket.domain.WSTokenRepository;
 
+/**
+ * Show tokens history.
+ * 
+ * @author Sergey Stotskiy
+ *
+ */
 @RestController
 public class HistoryController {
 

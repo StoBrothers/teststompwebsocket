@@ -1,7 +1,8 @@
-package org.teststompwebsocket.config;
+package org.teststompwebsocket.service;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -17,6 +18,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.teststompwebsocket.domain.WSToken;
 import org.teststompwebsocket.domain.WSTokenRepository;
 import org.teststompwebsocket.util.ApplicationProperties;
+import org.teststompwebsocket.util.WSSessionWrapper;
 
 /**
  * SessionHandler registering every websocket session and start a thread. This Thread every 5
@@ -40,7 +42,11 @@ public class SessionHandler {
     private final ScheduledExecutorService scheduler = Executors
         .newSingleThreadScheduledExecutor();
 
-    private final Map<String, WebSocketSession> sessionMap = new ConcurrentHashMap<>();
+    private final Map<String, WSSessionWrapper> sessionMap = new ConcurrentHashMap<>();
+
+    public Map<String, WSSessionWrapper> getSessions() {
+        return sessionMap;
+    }
 
     @Autowired
     private WSTokenRepository tokenRepository;
@@ -53,39 +59,75 @@ public class SessionHandler {
             @Override
             public void run() {
                 sessionMap.keySet().forEach(k -> {
-                    LOGGER.info("Active session: " + k + " user: "
-                        + sessionMap.get(k).getPrincipal().getName());
+                    LOGGER.info("Active session: " + k + " user: ");//
 
                     LocalDateTime workDateTime = LocalDateTime.now();
 
-                    for (WSToken currentToken : tokenRepository
-                        .findOneByPrincipalNameAndActive(
-                            sessionMap.get(k).getPrincipal().getName(), true)) {
+                    WSSessionWrapper sessionWraper = sessionMap.get(k);
+
+                    LocalDateTime currentTime = sessionWraper.getExpirationTime();
+
+                    if (currentTime == null) {
+                        Optional<WSToken> currentToken = tokenRepository
+                            .findOneByPrincipalNameAndActive(sessionWraper.getId(), true);
+                        if (!currentToken.isPresent()) {
+                            return;
+                        }
+                        WSToken token = currentToken.get();
                         LocalDateTime expirationDateTime = new LocalDateTime(
-                            currentToken.getExpirationDate());
+                            token.getExpirationDate());
                         if (workDateTime.compareTo(expirationDateTime) > 0) {
                             // check expiration for token
+                            token.setActive(false);
+                            tokenRepository.save(token);
                             if (killSession.get()) { // if needs to kill expirated session
                                 try {
-                                    sessionMap.get(k).close();
+                                    sessionWraper.close();
                                     sessionMap.remove(k);
                                 } catch (IOException e) {
                                     LOGGER.error(
                                         "Error while closing websocket session: {}", e);
                                 }
                             }
-                            currentToken.setActive(false);
-                            tokenRepository.save(currentToken);
+                        } else {
+                            sessionWraper.setExpirationTime(expirationDateTime);
+                        }
+
+                    } else {
+                        if (workDateTime
+                            .compareTo(sessionWraper.getExpirationTime()) > 0) {
+                            // check expiration for token
+                            Optional<WSToken> currentToken = tokenRepository
+                                .findOneByPrincipalNameAndActive(sessionWraper.getId(),
+                                    true);
+                            if (!currentToken.isPresent()) {
+                                return;
+                            }
+                            WSToken token = currentToken.get();
+                            token.setActive(false);
+                            tokenRepository.save(token);
+
+                            if (killSession.get()) { // if needs to kill expirated session
+                                try {
+                                    sessionWraper.close();
+                                    sessionMap.remove(k);
+                                } catch (IOException e) {
+                                    LOGGER.error(
+                                        "Error while closing websocket session: {}", e);
+                                }
+                            }
+
                         }
                     }
                 });
             }
+
         }, 10, 5, TimeUnit.SECONDS);
 
     }
 
     public void register(WebSocketSession session) {
-        sessionMap.put(session.getId(), session);
+        sessionMap.put(session.getId(), new WSSessionWrapper(session));
     }
 
 }

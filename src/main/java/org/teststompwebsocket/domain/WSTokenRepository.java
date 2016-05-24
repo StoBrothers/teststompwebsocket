@@ -1,6 +1,5 @@
 package org.teststompwebsocket.domain;
 
-import java.util.Collection;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,7 +14,7 @@ public interface WSTokenRepository extends JpaRepository<WSToken, Long> {
 
     Optional<WSToken> findOneByActive(Boolean active);
 
-    Collection<WSToken> findOneByPrincipalNameAndActive(String principalName,
+    Optional<WSToken> findOneByPrincipalNameAndActive(String principalName,
         Boolean active);
 
 }

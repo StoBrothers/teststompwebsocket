@@ -7,6 +7,7 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.SubscribableChannel;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.messaging.SubProtocolWebSocketHandler;
+import org.teststompwebsocket.service.SessionHandler;
 
 /**
  * CustomSubProtocolWebSocketHandler subscribe session Handler.
@@ -28,7 +29,7 @@ public class CustomSubProtocolWebSocketHandler extends SubProtocolWebSocketHandl
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        LOGGER.info("New websocket connection was established");
+        LOGGER.info("New websocket connection was established: " + session.getId());
         sessionHandler.register(session);
         super.afterConnectionEstablished(session);
     }
