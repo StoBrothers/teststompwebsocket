@@ -237,8 +237,6 @@ public class AuthenticationController {
 
         context.setAuthentication(authentication); // set new authenticated User in security
 
-        LOGGER.info(context.getAuthentication().getName());
-
         return user.get();
     }
 }

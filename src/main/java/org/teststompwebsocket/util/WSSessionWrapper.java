@@ -39,10 +39,6 @@ public class WSSessionWrapper {
         return expirationTime;
     }
 
-    public void setExpirationTime(LocalDateTime expirationTime) {
-        this.expirationTime = expirationTime;
-    }
-
     public void setExpirationDateTime(Date expirationTime) {
         this.expirationTime = new LocalDateTime(expirationTime);
     }

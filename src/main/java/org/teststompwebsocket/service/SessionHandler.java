@@ -69,7 +69,7 @@ public class SessionHandler {
                             }
                             tokenMap.remove(k);
                         }
-                    } else {// check token reset state in DB
+                    } else {// check if token reset state in DB
                         Optional<WSToken> currentToken = tokenRepository
                             .findOneByTokenAndActive(k, false);
                         if (currentToken.isPresent()) {// if token is not existed for this session
