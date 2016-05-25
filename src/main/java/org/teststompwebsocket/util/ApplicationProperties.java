@@ -25,7 +25,9 @@ public class ApplicationProperties {
     private static String buildDate;
 
     private static int plusexpirationseconds;
-    private static boolean killSession;
+
+    private static int period;
+    private static int initialDelay;
 
     private ApplicationProperties() {
     }
@@ -61,16 +63,22 @@ public class ApplicationProperties {
             .format(zdt.plusSeconds(zdt.getOffset().getTotalSeconds()));
     }
 
-    public static boolean getKillSession() {
-        return ApplicationProperties.killSession;
+    public static int getPeriod() {
+        return ApplicationProperties.period;
     }
 
-    @Value("${privatesettings.expirationtime.killsession}")
-    public void setKillSession(int killSession) {
-        if (killSession == 0) {
-            ApplicationProperties.killSession = false;
-        }
-        ApplicationProperties.killSession = true;
+    @Value("${privatesettings.expirationtime.period}")
+    public void setPeriod(int period) {
+        ApplicationProperties.period = period;
+    }
+
+    public static int getInitialDelay() {
+        return ApplicationProperties.initialDelay;
+    }
+
+    @Value("${privatesettings.expirationtime.initialDelay}")
+    public void setInitialDelay(int initialDelay) {
+        ApplicationProperties.initialDelay = initialDelay;
     }
 
     @Value("${privatesettings.expirationtime.plusexpirationseconds}")

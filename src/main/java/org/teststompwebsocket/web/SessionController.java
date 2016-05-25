@@ -38,9 +38,6 @@ public class SessionController {
     @Autowired
     private SessionHandler sessionHandler;
 
-    public SessionController() {
-    }
-
     /**
      * Get activity session.
      * 

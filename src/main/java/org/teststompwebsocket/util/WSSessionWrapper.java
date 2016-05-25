@@ -1,6 +1,7 @@
 package org.teststompwebsocket.util;
 
 import java.io.IOException;
+import java.util.Date;
 
 import org.joda.time.LocalDateTime;
 import org.springframework.web.socket.WebSocketSession;
@@ -17,7 +18,20 @@ public class WSSessionWrapper {
 
     private LocalDateTime expirationTime;
 
-    public WSSessionWrapper(WebSocketSession session) {
+    private String token;
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public WSSessionWrapper(String token, Date expirationDate, WebSocketSession session) {
+        this.token = token;
+        this.session = session;
+        this.expirationTime = new LocalDateTime(expirationDate);
         this.session = session;
     }
 
@@ -27,6 +41,10 @@ public class WSSessionWrapper {
 
     public void setExpirationTime(LocalDateTime expirationTime) {
         this.expirationTime = expirationTime;
+    }
+
+    public void setExpirationDateTime(Date expirationTime) {
+        this.expirationTime = new LocalDateTime(expirationTime);
     }
 
     public WebSocketSession getSession() {

@@ -29,6 +29,7 @@ import org.teststompwebsocket.domain.WSToken;
 import org.teststompwebsocket.domain.WSTokenRepository;
 import org.teststompwebsocket.service.CurrentUser;
 import org.teststompwebsocket.service.CurrentUserDetailsService;
+import org.teststompwebsocket.service.SessionHandler;
 import org.teststompwebsocket.util.ApplicationProperties;
 import org.teststompwebsocket.util.AuthenticationMsg;
 import org.teststompwebsocket.util.WSAuthenticationException;
@@ -79,6 +80,9 @@ public class AuthenticationController {
     @Autowired
     private CurrentUserDetailsService currentUserDetailsService;
 
+    @Autowired
+    private SessionHandler sessionHandler;
+
     /**
      * Handle messages from user with login {username} and authentificate him. Build output message.
      * 
@@ -95,8 +99,6 @@ public class AuthenticationController {
     public Object handle(@Payload AuthenticationMsg message,
         @DestinationVariable("username") String username,
         @Header("simpSessionId") String simpSessionId) {
-
-        LOGGER.info("simpSessionId " + simpSessionId);
 
         if (!message.getType().equalsIgnoreCase(LOGIN_CUSTOMER)) {
             LOGGER.error("Wrong type of message:%s.", message.getType());
@@ -126,10 +128,18 @@ public class AuthenticationController {
             resetToken(simpSessionId);
             Date date = getExpirationDate();
             SimpleDateFormat format1 = new SimpleDateFormat(pattern);
+
+            Optional<WSToken> activeToken = tokenRepository
+                .findOneByPrincipalNameAndActive(simpSessionId, true);
+
+            sessionHandler.addNewToken(uuid, date, simpSessionId);// update active sockets
+
             WSToken token = new WSToken(uuid, date, user, simpSessionId);
             tokenRepository.save(token); // save new token in storage
+
             dataMap.put(API_TOKEN, String.valueOf(uuid));
             dataMap.put(API_TOKEN_EXPIRATION_DATE, format1.format(date));
+
         }
         return message;
     }
@@ -140,6 +150,7 @@ public class AuthenticationController {
      * @param principalName
      */
     public void resetToken(String simpSessionId) {
+
         Optional<WSToken> wsToken = tokenRepository
             .findOneByPrincipalNameAndActive(simpSessionId, true);
         if (!wsToken.isPresent()) {
@@ -148,7 +159,6 @@ public class AuthenticationController {
         WSToken token = wsToken.get();
         token.setActive(false);
         tokenRepository.saveAndFlush(token);
-
     }
 
     /**

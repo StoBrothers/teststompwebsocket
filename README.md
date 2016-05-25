@@ -26,7 +26,9 @@ You can set application parameters in src/main/resources/application.yml
 
     expirationtime:
           plusexpirationseconds: 20   - time of expiration session in seconds
-          killsession: 1  -   if "1" - WebSocket session have to close after expiration time, else "0"  
+          initialDelay:  50    - delay for start service for check expriration token  
+          period: 5            - period beetwen start service for check expiration token  
+
 
 
 http://localhost:8080/index.html

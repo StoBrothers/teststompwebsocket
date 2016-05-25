@@ -145,6 +145,7 @@
                            	subscriptionOnline.unsubscribe();
                           	subscriptionLogin.unsubscribe();
                           	subscriptionUserErrors.unsubscribe();
+                          	websocket.close();
                         } else {
                             alert("Not connected." + websocket);
                         }

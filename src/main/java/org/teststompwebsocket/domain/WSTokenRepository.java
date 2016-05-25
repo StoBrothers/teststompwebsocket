@@ -17,4 +17,6 @@ public interface WSTokenRepository extends JpaRepository<WSToken, Long> {
     Optional<WSToken> findOneByPrincipalNameAndActive(String principalName,
         Boolean active);
 
+    Optional<WSToken> findOneByTokenAndActive(String token, Boolean active);
+
 }

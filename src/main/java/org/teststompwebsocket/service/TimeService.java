@@ -17,8 +17,6 @@ package org.teststompwebsocket.service;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -37,8 +35,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class TimeService implements ApplicationListener<BrokerAvailabilityEvent> {
-
-    private static Log logger = LogFactory.getLog(TimeService.class);
 
     private final MessageSendingOperations<String> messagingTemplate;
 
