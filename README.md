@@ -2,7 +2,7 @@
 
 WebSocket + STOMP + Spring MVC + REST + JSON API.
     
-Demo vote system.
+Demo WebSocket system.
 ========================
 
 Requirements
@@ -17,7 +17,7 @@ How run a project?
 --------------------------
 
 ```
-mvn spring-boot:run 
+mvn spring-boot:run
 ```
 Project supported some spring profiles. 
 
@@ -31,7 +31,10 @@ You can set application parameters in src/main/resources/application.yml
 
 
 
+You can to work with application over link:
+
 http://localhost:8080/index.html
+
 
 Introduction
 --------------------------
@@ -39,11 +42,10 @@ Introduction
 This is authentication system over STOMP and WebSocket. Application provides the following functions:
 
 1. Authentication user over websocket.
-2. Generate and save new token and expiration time of token.
-3. Show session expiration time and allow to kill session and close socket.
-4. Internal job check opened sessions  and close expired sessions every 5 seconds.
-5. You can to see storage with token at history page.
-6. You can to see opened sessions at sessions page.
+2. Generate and save new token with expiration time of token.
+3. Internal service check opened sessions and check expired sessions every period seconds.
+4. You can to see storage with token at history page.
+5. You can to see opened sessions at sessions page.
 
  
 How work with application?
