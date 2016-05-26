@@ -64,6 +64,30 @@ Test users
         "app6" / "app6"
 
 
+Steps for update this project for start at WildFly server:
+
+1. You have to remove these lines from your configuration (standalone.xml):
+
+    <extension module="org.jboss.as.jsf"/>
+    <subsystem xmlns="urn:jboss:domain:jsf:1.0"/>
+
+2. Just exclude it from pom.xml:
+
+  	<dependency>
+		<groupId>org.springframework.boot</groupId>
+            	<artifactId>spring-boot-starter-web</artifactId>
+            	<exclusions>
+                	<exclusion>
+                    		<groupId>org.springframework.boot</groupId>
+                    		<artifactId>spring-boot-starter-tomcat</artifactId>
+                	</exclusion>
+            	</exclusions>
+        </dependency>
+
+3. Build a project: mvn -DskipTests clean package 
+4. Copy result war file to your wildfly\standalone\deployments folder.
+5. Execute standalone.bat
+
 
 author: Sergey Stotskiy
 
