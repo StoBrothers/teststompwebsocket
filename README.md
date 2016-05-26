@@ -71,10 +71,9 @@ Steps for update this project for start at WildFly server:
     <extension module="org.jboss.as.jsf"/>
     <subsystem xmlns="urn:jboss:domain:jsf:1.0"/>
 
-2. Just exclude it from pom.xml:
+2. Just exclude dependency from pom.xml:
 
-  	<dependency>
-		<groupId>org.springframework.boot</groupId>
+		<groupId>org.springframework.boot</groupId >
             	<artifactId>spring-boot-starter-web</artifactId>
             	<exclusions>
                 	<exclusion>
@@ -82,7 +81,6 @@ Steps for update this project for start at WildFly server:
                     		<artifactId>spring-boot-starter-tomcat</artifactId>
                 	</exclusion>
             	</exclusions>
-        </dependency>
 
 3. Build a project: mvn -DskipTests clean package 
 4. Copy result war file to your wildfly\standalone\deployments folder.
