@@ -7,7 +7,8 @@ import org.joda.time.LocalDateTime;
 import org.springframework.web.socket.WebSocketSession;
 
 /**
- * Wrapper for WebSocket Session.
+ * Wrapper for WebSocket Session contains unique token, 
+ * expirationTime for this token, reference to active WebSocketSession.
  * 
  * @author Sergey Stotskiy
  *

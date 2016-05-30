@@ -35,12 +35,24 @@ public class SessionHandler {
 
     private final ScheduledExecutorService scheduler = Executors
         .newSingleThreadScheduledExecutor();
-
+    /**
+     * Map <Websocket number in string format, WebSocketSession>
+     * Storage of opened sockets.   
+     */
     private final Map<String, WebSocketSession> sessionMap = new ConcurrentHashMap<>();
 
+    /**
+     * Map <Token, Wrapper for WebSocketSession> it's buffer for new received tokens. 
+     * This tokens will be moved to tokenMap for to keep track of expiration time.   
+     */
+    private final Map<String, WSSessionWrapper> newcomersMap = new ConcurrentHashMap<>();
+
+    /**
+     * Map <Token, Wrapper for WebSocketSession> 
+     * Map of active tokens for control of expiration time.   
+     */
     private final Map<String, WSSessionWrapper> tokenMap = new ConcurrentHashMap<>();
 
-    private final Map<String, WSSessionWrapper> newcomersnMap = new ConcurrentHashMap<>();
 
     @Autowired
     private WSTokenRepository tokenRepository;
@@ -81,10 +93,9 @@ public class SessionHandler {
                     }
                 });
 
-                newcomersnMap.keySet().forEach(p -> {
-                    WSSessionWrapper sessionWraper = newcomersnMap.get(p);
+                newcomersMap.keySet().forEach(p -> {//moved from newcomers to working storage 
+                    WSSessionWrapper sessionWraper = newcomersMap.remove(p);
                     tokenMap.put(p, sessionWraper);
-                    newcomersnMap.remove(p);
                 });
 
             }
@@ -103,7 +114,7 @@ public class SessionHandler {
     }
 
     /**
-     * Add new token
+     * Add new token to newcomers storage.
      * 
      * @param token
      * @param expirationDate
@@ -112,11 +123,14 @@ public class SessionHandler {
     public void addNewToken(String token, Date expirationDate, String simpSessionId) {
         WebSocketSession currentSocket = null;
         if ((currentSocket = sessionMap.get(simpSessionId)) != null) {
-            newcomersnMap.put(token,
+            newcomersMap.put(token,
                 new WSSessionWrapper(token, expirationDate, currentSocket));
         }
     }
-
+    /**
+     * Get working sessions.
+     * @return
+     */
     public Map<String, WSSessionWrapper> getSessions() {
         return tokenMap;
     }

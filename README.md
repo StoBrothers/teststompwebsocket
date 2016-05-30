@@ -64,12 +64,12 @@ Test users
         "app6" / "app6"
 
 
-Steps for update this project for start at WildFly server:
+Steps for migration on WildFly server:
 
 1. You have to remove these lines from your configuration (standalone.xml):
 
-    <extension module="org.jboss.as.jsf"/>
-    <subsystem xmlns="urn:jboss:domain:jsf:1.0"/>
+    extension module="org.jboss.as.jsf"
+    subsystem xmlns="urn:jboss:domain:jsf:1.0"
 
 2. Just exclude dependency from pom.xml:
 

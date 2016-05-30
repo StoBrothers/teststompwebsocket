@@ -115,22 +115,18 @@ public class AuthenticationController {
 
         String logonName = dataMap.get(EMAIL);
         User user = authentificateUser(logonName, dataMap.get(PASSWORD));
-
+        dataMap.clear();
+        
         if (user == null) {
             message.setType(CUSTOMER_ERROR);
-            dataMap.clear();
             dataMap.put(ERROR_DESCRIPTION, "Customer not found");
             dataMap.put(ERROR_CODE, "customer.notFound");
         } else {
             message.setType(CUSTOMER_API_TOKEN);
-            dataMap.clear();
             String uuid = UUID.randomUUID().toString();
             resetToken(simpSessionId);
             Date date = getExpirationDate();
-            SimpleDateFormat format1 = new SimpleDateFormat(pattern);
-
-            Optional<WSToken> activeToken = tokenRepository
-                .findOneByPrincipalNameAndActive(simpSessionId, true);
+            SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
 
             sessionHandler.addNewToken(uuid, date, simpSessionId);// update active sockets
 
@@ -138,7 +134,7 @@ public class AuthenticationController {
             tokenRepository.save(token); // save new token in storage
 
             dataMap.put(API_TOKEN, String.valueOf(uuid));
-            dataMap.put(API_TOKEN_EXPIRATION_DATE, format1.format(date));
+            dataMap.put(API_TOKEN_EXPIRATION_DATE, dateFormat.format(date));
 
         }
         return message;
