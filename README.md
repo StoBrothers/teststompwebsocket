@@ -82,7 +82,7 @@ Steps for migration on WildFly server:
                 	</exclusion>
             	</exclusions>
 
-3. Build a project: mvn -DskipTests clean package 
+3. Build a project: mvn clean package 
 4. Copy result war file to your wildfly\standalone\deployments folder.
 5. Execute standalone.bat
 
