@@ -9,6 +9,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.teststompwebsocket.service.AuthenticationService;
+import org.teststompwebsocket.service.AuthenticationServiceImpl;
 import org.teststompwebsocket.util.AuthenticationMsg;
 import org.teststompwebsocket.util.WSAuthenticationException;
 

@@ -13,7 +13,7 @@ http://www.oracle.com/
 Install Apache Maven 
 https://maven.apache.org
 
-How run a project?
+How to run the project?
 --------------------------
 
 ```
@@ -31,7 +31,7 @@ You can set application parameters in src/main/resources/application.yml
 
 
 
-You can to work with application over link:
+You can work with application over link:
 
 http://localhost:8080/index.html
 
@@ -39,16 +39,16 @@ http://localhost:8080/index.html
 Introduction
 --------------------------
 
-This is authentication system over STOMP and WebSocket. Application provides the following functions:
+This is an authentication system over STOMP and WebSocket. Application provides the following functions:
 
-1. Authentication user over websocket.
+1. User authentication over websocket.
 2. Generate and save new token with expiration time of token.
 3. Internal service check opened sessions and check expired sessions every period seconds.
-4. You can to see storage with token at history page.
-5. You can to see opened sessions at sessions page.
+4. You can see storage with token at history page.
+5. You can see opened sessions at sessions page.
 
  
-How work with application?
+Run application
 ------------------------------
 You can open application in browser: http://localhost:8080
  
